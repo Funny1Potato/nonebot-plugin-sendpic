@@ -15,7 +15,7 @@ __plugin_meta = PluginMetadata(
     usage="发送 发图帮助 即可获取指令文档",
     config=Config,
     type="{'application'}",
-    homepage="{项目主页}",
+    homepage="https://github.com/Funny1Potato/nonebot-plugin-sendpic",
     supported_adapters={"~onebot.v11"},
 )
 
