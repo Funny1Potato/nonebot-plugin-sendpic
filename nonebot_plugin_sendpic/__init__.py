@@ -12,7 +12,7 @@ import os
 __plugin_meta = PluginMetadata(
     name="nonebot-plugin-sendpic",
     description="基于图片api的发图插件，支持定时任务",
-    usage="发送 发图帮助 即可获取指令文档",
+    usage="发送 发图 即可获取图片",
     config=Config,
     type="{'application'}",
     homepage="https://github.com/Funny1Potato/nonebot-plugin-sendpic",
