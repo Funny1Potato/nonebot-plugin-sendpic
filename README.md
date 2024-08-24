@@ -97,6 +97,8 @@ apscheduler_config={ "apscheduler. executors. processpool": {"type": "processpoo
 
 □接入更多图片api
 
+□定时任务形式多样化
+
 □...
 
 ## 还有些想说的
