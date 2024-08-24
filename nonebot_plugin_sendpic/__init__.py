@@ -11,10 +11,10 @@ from nonebot.params import CommandArg
 __plugin_meta = PluginMetadata(
     name="nonebot-plugin-sendpic",
     description="基于图片api的发图插件，支持定时任务",
-    usage="发送 发图 即可获取图片",
+    usage="发送 发图帮助 即可获取指令文档",
     config=Config,
     type="{'application'}",
-    homepage="https://github.com/Funny1Potato/nonebot-plugin-sendpic",
+    homepage="https://github.com/Funny1Potato/nonebot-plugin-sendpic/tree/sendpic",
     supported_adapters={"~onebot.v11"},
 )
 
@@ -29,19 +29,21 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     ActionFailed,
 )
-import requests
 from nonebot import require
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 
+from httpx import AsyncClient
 
-def get_pic(num:int,tag:str):
-    url ='https://image.anosu.top/pixiv/json'  #图片url
-    params = {'num':num,'keyword':tag}  #获取参数
-    pic = requests.get(url,params = params)  #请求数据 
-    list = json.loads("".join(x for x in pic.text if x.isprintable()))  #结果处理
-    logger.success("已获取图片")
-    return [x["url"] for x in list]  #上报url
+
+async def get_pic(num:int,tag:str):
+    async with AsyncClient() as session:
+        url ='https://image.anosu.top/pixiv/json'  #图片url
+        params = {'num':num,'keyword':tag}  #获取参数
+        pic = await session.get(url,params = params)  #请求数据 
+        list = json.loads("".join(x for x in pic.text if x.isprintable()))  #结果处理
+        logger.success("已获取图片")
+        return [x["url"] for x in list]  #上报url
 
 
 #自动任务函数部分   
@@ -57,7 +59,7 @@ async def pic(**setting):
     group = group1[k]
     num = int(num)  
 
-    p = get_pic(num,tag)  #获取图片
+    p = await get_pic(num,tag)  #获取图片
     for i in range(num):
         url = p[i]  #逐个提取列表中的图片url
         group_id = int(group)
@@ -67,25 +69,27 @@ async def pic(**setting):
             continue
 
 #自动任务计时部分
-a = config.pic_num
-b = config.pic_tag
-c = config.pic_time
-d = config.pic_group
-if len(a)==len(b)==len(c)==len(d):  #检测配置是否有一一对应
-    l = len(c)
-    for i in range(l):  
-        cc = c[i]
-        c1,c2,c3,c4 = cc.split("-")
-        c1 = int(c1)
-        c2 = int(c2)
-        c3 = int(c3)
-        c4 = int(c4)  #读取并处理时间配置
-        if c1 == 0:
-            scheduler.add_job(pic, 'cron', hour=c2, minute=c3, second=c4, kwargs={"i":i})  #定时
-        else:
-            scheduler.add_job(pic, 'interval', hours=c2, minutes=c3, seconds=c4, kwargs={"i":i})  #时间间隔
-else:
-    logger.error("自动发图功能配置错误，请检查")
+try:
+    a = config.pic_num
+    b = config.pic_tag
+    c = config.pic_time
+    d = config.pic_group
+    if len(a)==len(b)==len(c)==len(d):  #检测配置是否有一一对应
+        l = len(c)
+        for i in range(l):  
+            cc = c[i]
+            c1,c2,c3,c4 = cc.split("-")
+            c1 = int(c1)
+            c2 = int(c2)
+            c3 = int(c3)
+            c4 = int(c4)  #读取并处理时间配置
+            if c1 == 0:
+                scheduler.add_job(pic, 'cron', hour=c2, minute=c3, second=c4, kwargs={"i":i})  #定时
+            else:
+                scheduler.add_job(pic, 'interval', hours=c2, minutes=c3, seconds=c4, kwargs={"i":i})  #时间间隔
+    else:
+        logger.error("自动发图功能配置错误，请检查")
+
 
 
 
@@ -116,7 +120,7 @@ async def pix(args: Message = CommandArg()):
                     num = int(num)  
                 except:
                     await pixiv.finish("参数错误，请检查输入是否正确")
-            p = get_pic(num,tag)  #获取图片
+            p = await get_pic(num,tag)  #获取图片
             if len(p) == 0:
                 await pixiv.finish("搜索失败，可能是网络问题或是输入的关键词搜不到图")
             await pixiv.send("正在努力发送中，受网络影响可能实际收到图片数较设定值较少")
@@ -140,7 +144,7 @@ async def pix(args: Message = CommandArg()):
         j = 0
         try:
             num = int(num)
-            p = get_pic(num,tag)  #获取图片
+            p = await get_pic(num,tag)  #获取图片
             if len(p) == 0:
                 await pixiv.finish("找图失败，可能是网络问题导致搜不到图")
             await pixiv.send("正在努力发送中，请稍等")
@@ -149,13 +153,13 @@ async def pix(args: Message = CommandArg()):
                 await pixiv.send(MessageSegment.image(url))
             except:
                 j = j + 1
-                continue
             logger.success(f"已发送{num - j}张图，{j}张图发送失败")
             if j == num:
                 await pixiv.finish("发送失败了，请重试")
-            else：
+            else:
                 await pixiv.finish(f"发送完成，已发送{num - j}张图")
         except:
             return
+
 
 
