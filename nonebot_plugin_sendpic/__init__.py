@@ -6,8 +6,7 @@ import json
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
-from pathlib import Path
-import os
+
 
 __plugin_meta = PluginMetadata(
     name="nonebot-plugin-sendpic",
@@ -160,17 +159,3 @@ async def pix(args: Message = CommandArg()):
             return
 
 
-if not os.path.exists("./data/sendpic/sendpic.png"):
-    os.mkdir("./data/sendpic")        # 创建文件夹
-    os.mknod("./data/sendpic/sendpic.png")    # 创建文件
-    url='https://link.funnypotato.cn/sendpic.png'   
-    myfile=requests.get(url)
-    open('./data/sendpic/sendpic.png','wb').write(myfile.content)   #下载文档图片
-    
-
-botdoc = on_command("发图帮助")
-
-@botdoc.handle()
-async def doc():
-    url = Path("./data/sendpic/sendpic.png")
-    await botdoc.finish(MessageSegment.image(url))
