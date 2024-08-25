@@ -8,13 +8,13 @@ from nonebot.adapters import Message
 from nonebot.params import CommandArg
 
 
-__plugin_meta = PluginMetadata(
+__plugin_meta__ = PluginMetadata(
     name="nonebot-plugin-sendpic",
     description="基于图片api的发图插件，支持定时任务",
-    usage="发送 发图帮助 即可获取指令文档",
+    usage="发送 发图 即可获取图片",
     config=Config,
-    type="{'application'}",
-    homepage="https://github.com/Funny1Potato/nonebot-plugin-sendpic/tree/sendpic",
+    type="application",
+    homepage="https://github.com/Funny1Potato/nonebot-plugin-sendpic",
     supported_adapters={"~onebot.v11"},
 )
 
@@ -31,7 +31,9 @@ from nonebot.adapters.onebot.v11 import (
 )
 from nonebot import require
 
-scheduler = require('nonebot_plugin_apscheduler').scheduler
+require("nonebot_plugin_apscheduler")
+
+from nonebot_plugin_apscheduler import scheduler
 
 from httpx import AsyncClient
 
@@ -89,7 +91,8 @@ try:
                 scheduler.add_job(pic, 'interval', hours=c2, minutes=c3, seconds=c4, kwargs={"i":i})  #时间间隔
     else:
         logger.error("自动发图功能配置错误，请检查")
-
+except:
+    logger.error("自动发图功能未配置")
 
 
 
