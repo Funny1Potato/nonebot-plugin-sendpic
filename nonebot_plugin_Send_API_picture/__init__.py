@@ -14,7 +14,7 @@ __plugin_meta__ = PluginMetadata(
     usage="发送 发图 即可获取图片",
     config=Config,
     type="application",
-    homepage="https://github.com/Funny1Potato/Send-API-picture",
+    homepage="https://github.com/Funny1Potato/nonebot-plugin-Send-API-picture",
     supported_adapters={"~onebot.v11"},
 )
 
