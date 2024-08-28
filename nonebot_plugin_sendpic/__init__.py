@@ -6,12 +6,13 @@ import json
 from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
-
+import os
+from pathlib import Path
 
 __plugin_meta__ = PluginMetadata(
-    name="发图",
+    name="无情的发图姬",
     description="基于图片api的发图插件，支持定时任务",
-    usage="发送 发图 即可获取图片",
+    usage="发送 发图帮助 即可获取指令文档",
     config=Config,
     type="application",
     homepage="https://github.com/Funny1Potato/nonebot-plugin-sendpic",
@@ -164,5 +165,25 @@ async def pix(args: Message = CommandArg()):
         except:
             return
 
+#自带插件文档
+botdoc = on_command("发图帮助")
 
+@botdoc.handle()
+async def phelp():
+    if not os.path.exists("./data/sendpic/help.png"):
+        try:
+            os.mkdir("./data")
+        except:
+            try:
+                os.mkdir("./data/sendpic")   # 创建文件夹
+            except:
+                pass   
+        async with AsyncClient() as session:
+            response = await session.get("https://link.funnypotato.cn/sendpic.png")
+            open("./data/sendpic/help.png", "wb").write(response.content)  #下载文件
+    url = Path("./data/sendpic/help.png")
+    await botdoc.finish(MessageSegment.image(url))
+
+
+    
 
