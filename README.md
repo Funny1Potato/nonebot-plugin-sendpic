@@ -104,4 +104,4 @@ apscheduler_config={ "apscheduler. executors. processpool": {"type": "processpoo
 ## 还有些想说的
 本仓库使用了nonebot-plugin-template的模板，谨向作者表示感谢
 
-本人为普通大学生，并非计算机类的专业，水平有限，如有问题或建议请直接发issue，如能解决我会尽量解决
+本人为普通大学生，并非计算机类的专业，水平有限，如有问题或建议请直接发issue，我会尽量解决
