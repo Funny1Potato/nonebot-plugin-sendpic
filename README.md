@@ -87,7 +87,9 @@ pin_group = ["123456789","1145141919","123456789"]
 
 ## 可能遇到的问题
 ### 定时任务不执行
-可能是apscheduler线程数满了，可以尝试在`.env`文件中添加
+可能是apscheduler线程数满了，请参考apscheduler配置 worker 数量或者允许job波动时间
+
+或直接尝试在`.env`文件中添加
 ```
 apscheduler_config={ "apscheduler. executors. processpool": {"type": "processpool","max_workers":"61"},"apscheduler. job_defaults. coalesce":"false","apscheduler. job_defaults:misfire_grace_time":"60","apscheduler. job_defaults. max_instances":"61" }
 ```
