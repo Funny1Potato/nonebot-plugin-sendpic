@@ -128,6 +128,7 @@ async def pix(args: Message = CommandArg()):
             if len(p) == 0:
                 await pixiv.finish("搜索失败，可能是网络问题或是输入的关键词搜不到图")
             await pixiv.send("正在努力发送中，受网络影响可能实际收到图片数较设定值较少")
+            logger.success(f"已获取图片url：{p}")
             for i in range(num):
                 url = p[i]  #逐个提取图片url
                 try:
@@ -152,7 +153,8 @@ async def pix(args: Message = CommandArg()):
             if len(p) == 0:
                 await pixiv.finish("找图失败，可能是网络问题导致搜不到图")
             await pixiv.send("正在努力发送中，请稍等")
-            url = p[i]  #提取图片url
+            logger.success(f"已获取图片url：{p}")
+            url = p[0]  #提取图片url
             try:
                 await pixiv.send(MessageSegment.image(url))
             except:
